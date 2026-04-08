@@ -1,0 +1,285 @@
+openapi: 3.0.1
+info:
+  title: Todo-Listen-Verwaltung
+  description: ""
+  contact:
+    email: lkaserjthfg@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 0.2.0
+
+servers:
+- url: http://127.0.0.1:5000/
+
+tags:
+- name: Listenverwaltung
+- name: Einträge
+
+paths:
+
+  /todo-list/{list_id}:
+    get:
+      tags:
+      - Listenverwaltung
+      summary: Liefert alle Einträge einer Todo-Liste
+      operationId: getTodoListEntries
+      parameters:
+      - name: list_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Erfolgreicher Abruf
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TodoEntry'
+        404:
+          description: Liste nicht gefunden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Serverfehler
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      tags:
+      - Listenverwaltung
+      summary: Löscht eine komplette Todo-Liste
+      operationId: deleteTodoList
+      parameters:
+      - name: list_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        204:
+          description: Erfolgreich gelöscht
+        404:
+          description: Liste nicht gefunden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Serverfehler
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    post:
+      tags:
+      - Einträge
+      summary: Fügt einen Eintrag zu einer Liste hinzu
+      operationId: addEntryToList
+      parameters:
+      - name: list_id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TodoEntryCreate'
+      responses:
+        201:
+          description: Eintrag erstellt
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TodoEntry'
+        404:
+          description: Liste nicht gefunden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Serverfehler
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+
+  /todo-list:
+    post:
+      tags:
+      - Listenverwaltung
+      summary: Fügt eine neue Todo-Liste hinzu
+      operationId: createTodoList
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TodoListCreate'
+      responses:
+        201:
+          description: Liste erstellt
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TodoList'
+        406:
+          description: Ungültige Daten
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TodoList'
+        500:
+          description: Serverfehler
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+
+  /entry/{entry_id}:
+    patch:
+      tags:
+      - Einträge
+      summary: Aktualisiert einen Eintrag
+      operationId: updateEntry
+      parameters:
+      - name: entry_id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TodoEntryUpdate'
+      responses:
+        200:
+          description: Eintrag aktualisiert
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TodoEntry'
+        404:
+          description: Eintrag nicht gefunden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        406:
+          description: Ungültige Daten
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TodoEntry'
+        500:
+          description: Serverfehler
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      tags:
+      - Einträge
+      summary: Löscht einen Eintrag
+      operationId: deleteEntry
+      parameters:
+      - name: entry_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        204:
+          description: Erfolgreich gelöscht
+        404:
+          description: Eintrag nicht gefunden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Serverfehler
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+
+components:
+  schemas:
+
+    TodoList:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+
+    TodoListCreate:
+      type: object
+      required:
+      - name
+      properties:
+        name:
+          type: string
+
+    TodoEntry:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+        user_id:
+          type: string
+          format: uuid
+        list_id:
+          type: string
+          format: uuid
+
+    TodoEntryCreate:
+      type: object
+      required:
+      - name
+      - description
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+
+    TodoEntryUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
