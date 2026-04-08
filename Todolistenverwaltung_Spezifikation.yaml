@@ -10,7 +10,7 @@ info:
   version: 0.2.0
 
 servers:
-- url: http://127.0.0.1:5000/
+- url: http://127.0.0.1:'500'0/
 
 tags:
 - name: Listenverwaltung
@@ -31,7 +31,7 @@ paths:
         schema:
           type: string
       responses:
-        200:
+        '200':
           description: Erfolgreicher Abruf
           content:
             application/json:
@@ -39,13 +39,13 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/TodoEntry'
-        404:
+        '404':
           description: Liste nicht gefunden
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-        500:
+        '500':
           description: Serverfehler
           content:
             application/json:
@@ -64,15 +64,15 @@ paths:
         schema:
           type: string
       responses:
-        204:
+        '204':
           description: Erfolgreich gelöscht
-        404:
+        '404':
           description: Liste nicht gefunden
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-        500:
+        '500':
           description: Serverfehler
           content:
             application/json:
@@ -97,19 +97,19 @@ paths:
             schema:
               $ref: '#/components/schemas/TodoEntryCreate'
       responses:
-        201:
+        '201':
           description: Eintrag erstellt
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/TodoEntry'
-        404:
+        '404':
           description: Liste nicht gefunden
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-        500:
+        '500':
           description: Serverfehler
           content:
             application/json:
@@ -130,19 +130,19 @@ paths:
             schema:
               $ref: '#/components/schemas/TodoListCreate'
       responses:
-        201:
+        '201':
           description: Liste erstellt
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/TodoList'
-        406:
+        '406':
           description: Ungültige Daten
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/TodoList'
-        500:
+        '500':
           description: Serverfehler
           content:
             application/json:
@@ -169,25 +169,25 @@ paths:
             schema:
               $ref: '#/components/schemas/TodoEntryUpdate'
       responses:
-        200:
+        '200':
           description: Eintrag aktualisiert
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/TodoEntry'
-        404:
+        '404':
           description: Eintrag nicht gefunden
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-        406:
+        '406':
           description: Ungültige Daten
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/TodoEntry'
-        500:
+        '500':
           description: Serverfehler
           content:
             application/json:
@@ -206,15 +206,15 @@ paths:
         schema:
           type: string
       responses:
-        204:
+        '204':
           description: Erfolgreich gelöscht
-        404:
+        '404':
           description: Eintrag nicht gefunden
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-        500:
+        '500':
           description: Serverfehler
           content:
             application/json:
