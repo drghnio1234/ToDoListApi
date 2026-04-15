@@ -7,9 +7,9 @@ from flask import Flask, request, jsonify, abort
 app = Flask(__name__)
 
 # create unique id for lists, entries
-todo_list_1_id = '1318d3d1-d979-47e1-a225-dab1751dbe75'
-todo_list_2_id = '3062dc25-6b80-4315-bb1d-a7c86b014c65'
-todo_list_3_id = '44b02e00-03bc-451d-8d01-0c67ea866fee'
+todo_list_1_id = str(uuid.uuid4())
+todo_list_2_id = str(uuid.uuid4())
+todo_list_3_id = str(uuid.uuid4())
 todo_1_id = uuid.uuid4()
 todo_2_id = uuid.uuid4()
 todo_3_id = uuid.uuid4()
@@ -54,10 +54,21 @@ def handle_list(list_id):
         return jsonify([i for i in todos if i['list'] == list_id])
     elif request.method == 'DELETE':
         # delete list with given id
-        print('Deleting todo list...')
+        print(f'Deleting todo list {list_item['name']}')
         todo_lists.remove(list_item)
         return '', 200
 
+# define endpoint for adding a new todo entry to a list with given id
+@app.route('/list/<list_id>', methods=['POST'])
+def add_new_todo(list_id):
+    # make JSON from POST data (even if content type is not set correctly)
+    new_todo = request.get_json(force=True)
+    print(f'Got new todo to be added: {format(new_todo)} under the list with id {list_id}')
+    # create id for new list, save it and return the list with id
+    new_todo['id'] = uuid.uuid4()
+    new_todo['list'] = list_id
+    todos.append(new_todo)
+    return jsonify(new_todo), 200
 
 # define endpoint for adding a new list
 @app.route('/list', methods=['POST'])
