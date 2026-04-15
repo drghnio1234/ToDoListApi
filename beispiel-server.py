@@ -36,8 +36,8 @@ def apply_cors_header(response):
     response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
     return response
 
-# define endpoint for getting and deleting existing todo lists
-@app.route('/list/<list_id>', methods=['GET', 'DELETE'])
+# define endpoint for getting and deleting existing todo lists and posting entries to existing todo lists
+@app.route('/list/<list_id>', methods=['GET', 'DELETE', 'POST'])
 def handle_list(list_id):
     # find todo list depending on given list id
     list_item = None
@@ -57,25 +57,22 @@ def handle_list(list_id):
         print(f'Deleting todo list {list_item['name']}')
         todo_lists.remove(list_item)
         return '', 200
-
-# define endpoint for adding a new todo entry to a list with given id
-@app.route('/list/<list_id>', methods=['POST'])
-def add_new_todo(list_id):
-    # make JSON from POST data (even if content type is not set correctly)
-    new_todo = request.get_json(force=True)
-    print(f'Got new todo to be added: {format(new_todo)} under the list with id {list_id}')
-    # create id for new list, save it and return the list with id
-    new_todo['id'] = uuid.uuid4()
-    new_todo['list'] = list_id
-    todos.append(new_todo)
-    return jsonify(new_todo), 200
+    elif request.method == 'POST':
+        # make JSON from POST data (even if content type is not set correctly)
+        new_todo = request.get_json(force=True)
+        print(f'Got new todo to be added: {format(new_todo)} under the list {list_item['name']}')
+        # create id for new list, save it and return the list with id
+        new_todo['id'] = uuid.uuid4()
+        new_todo['list'] = list_id
+        todos.append(new_todo)
+        return jsonify(new_todo), 200
 
 # define endpoint for adding a new list
 @app.route('/list', methods=['POST'])
 def add_new_list():
     # make JSON from POST data (even if content type is not set correctly)
     new_list = request.get_json(force=True)
-    print('Got new list to be added: {}'.format(new_list))
+    print(f'Got new list to be added: {format(new_list)}')
     # create id for new list, save it and return the list with id
     new_list['id'] = uuid.uuid4()
     todo_lists.append(new_list)
@@ -87,6 +84,27 @@ def add_new_list():
 def get_all_lists():
     return jsonify(todo_lists)
 
+@app.route('/todos/<todo_id>', methods=['PATCH', 'DELETE'])
+def handle_todo(todo_id):
+    todo_item = None
+    for t in todos:
+        if str(t['id']) == todo_id:
+            todo_item = t
+            break
+    if not todo_item:
+        abort(404)
+    if request.method == 'PATCH':
+        # make JSON from POST data (even if content type is not set correctly)
+        updated_todo = request.get_json(force=True)
+        print(f'Got update for todo {todo_item['name']}: {format(updated_todo)}')
+        # update the existing todo item with the new values
+        for i in updated_todo:
+            todo_item[i] = updated_todo[i]
+        return jsonify(todo_item), 200
+    elif request.method == 'DELETE':
+        print(f'Deleting todo {todo_item['name']}')
+        todos.remove(todo_item)
+        return '', 200
 
 if __name__ == '__main__':
     # start Flask server
