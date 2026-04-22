@@ -60,7 +60,7 @@ def handle_list(list_id):
     if request.method == 'POST':
         new_todo = request.get_json(force=True)
         if not new_todo or "name" not in new_todo or "description" not in new_todo:
-            return error("Ungültige Daten", 406)
+            return error("Ungueltige Daten", 406)
         new_todo['id'] = str(uuid.uuid4())
         new_todo['list_id'] = list_id
         todos.append(new_todo)
@@ -70,7 +70,7 @@ def handle_list(list_id):
 def add_new_list():
     new_list = request.get_json(force=True)
     if not new_list or "name" not in new_list:
-        return error("Ungültige Daten", 406)
+        return error("Ungueltige Daten", 406)
     new_list['id'] = str(uuid.uuid4())
     todo_lists.append(new_list)
     return jsonify(new_list), 201
@@ -88,9 +88,9 @@ def handle_todo(entry_id):
         updated = request.get_json(force=True)
         allowed = {"name", "description"}
         if not updated:
-            return error("Ungültige Daten", 406)
+            return error("Ungueltige Daten", 406)
         if not any(k in allowed for k in updated):
-            return error("Ungültige Daten", 406)
+            return error("Ungueltige Daten", 406)
         print(f"Got update for todo {todo_item['name']}: {updated}")
         for key in updated:
             if key in ["name", "description"]:
