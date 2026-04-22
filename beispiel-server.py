@@ -51,6 +51,7 @@ def handle_list(list_id):
     if not list_item:
         return error("Liste nicht gefunden", 404)
     if request.method == 'GET':
+        print(f"Getting entries for list {list_item['name']}")
         entries = [i for i in todos if i['list_id'] == list_id]
         return jsonify(entries), 200
     if request.method == 'DELETE':
@@ -61,6 +62,7 @@ def handle_list(list_id):
         new_todo = request.get_json(force=True)
         if not new_todo or "name" not in new_todo or "description" not in new_todo:
             return error("Ungueltige Daten", 406)
+        print(f"Adding new todo to list {list_item['name']}")
         new_todo['id'] = str(uuid.uuid4())
         new_todo['list_id'] = list_id
         todos.append(new_todo)
@@ -71,12 +73,14 @@ def add_new_list():
     new_list = request.get_json(force=True)
     if not new_list or "name" not in new_list:
         return error("Ungueltige Daten", 406)
+    print(f"Adding new todo list {new_list['name']}")
     new_list['id'] = str(uuid.uuid4())
     todo_lists.append(new_list)
     return jsonify(new_list), 201
 
 @app.route('/todo-lists', methods=['GET'])
 def get_all_lists():
+    print("Getting all todo lists")
     return jsonify(todo_lists), 200
 
 @app.route('/entry/<entry_id>', methods=['PATCH', 'DELETE'])
@@ -91,7 +95,7 @@ def handle_todo(entry_id):
             return error("Ungueltige Daten", 406)
         if not any(k in allowed for k in updated):
             return error("Ungueltige Daten", 406)
-        print(f"Got update for todo {todo_item['name']}: {updated}")
+        print(f"Updating todo {todo_item['name']}")
         for key in updated:
             if key in ["name", "description"]:
                 todo_item[key] = updated[key]
