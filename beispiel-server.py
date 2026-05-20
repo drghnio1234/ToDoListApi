@@ -57,7 +57,7 @@ def handle_list(list_id):
     if request.method == 'DELETE':
         print(f"Deleting todo list {list_item['name']}")
         todo_lists.remove(list_item)
-        return error("Liste gelöscht", 204)
+        return jsonify({"message": "Daten erfolgreich geloescht"}), 204
     if request.method == 'POST':
         new_todo = request.get_json(force=True)
         if not new_todo or "name" not in new_todo or "description" not in new_todo:
@@ -103,7 +103,7 @@ def handle_todo(entry_id):
     if request.method == 'DELETE':
         print(f"Deleting todo {todo_item['name']}")
         todos.remove(todo_item)
-        return '', 204
+        return jsonify({"message": "Daten erfolgreich geloescht"}), 204
 
 if __name__ == '__main__':
     app.debug = True
