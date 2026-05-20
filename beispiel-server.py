@@ -57,7 +57,7 @@ def handle_list(list_id):
     if request.method == 'DELETE':
         print(f"Deleting todo list {list_item['name']}")
         todo_lists.remove(list_item)
-        return '', 204
+        return error("Liste gelöscht", 204)
     if request.method == 'POST':
         new_todo = request.get_json(force=True)
         if not new_todo or "name" not in new_todo or "description" not in new_todo:
